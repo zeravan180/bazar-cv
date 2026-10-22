@@ -13,7 +13,7 @@ input,select,textarea{width:100%;padding:10px;margin:4px 0 8px;border:1px solid 
 label{font-size:13px;color:var(--mu)}button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--pr);color:#fff;cursor:pointer}
 button.g{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}.full{width:100%}.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
 nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bd);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-nav button{flex:1;background:none;color:var(--mu);border-radius:0;padding:8px 2px;font-size:11px}nav button.on{color:var(--pr);font-weight:bold}nav span{display:block;font-size:20px}
+nav button{flex:1;background:none;color:var(--mu);border-radius:0;padding:8px 1px;font-size:10px}nav button.on{color:var(--pr);font-weight:bold}nav span{display:block;font-size:20px}
 .tag{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:2px 10px;font-size:12px;color:var(--mu);margin-left:4px}
 .pr{color:var(--pr);font-weight:bold}.img{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:8px}
 .sw{width:30px;height:30px;border-radius:50%;padding:0;flex:none}.chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}.chips button{flex:none;padding:6px 14px;border-radius:20px}
@@ -44,16 +44,16 @@ let U=null,A=[],CV={name:"",title:"",phone:"",email:"",city:"",sum:"",skills:"",
 const gal=x=>{const a=x.imgs&&x.imgs.length?x.imgs:x.img?[x.img]:[];return a.length?`<div style="position:relative"><div class="gal">${a.map((s,i)=>`<img src="${s}" onclick="lb('${x.id}',${i})">`).join("")}</div>${a.length>1?`<span class="cnt">📷 ${a.length}</span>`:""}</div>`:""};
 const shrink=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const m=new Image();m.onload=()=>{const k=Math.min(1,600/Math.max(m.width,m.height)),c=document.createElement("canvas");c.width=m.width*k;c.height=m.height*k;c.getContext("2d").drawImage(m,0,0,c.width,c.height);ok(c.toDataURL("image/jpeg",.55))};m.onerror=no;m.src=r.result};r.onerror=no;r.readAsDataURL(f)});
 const prev=()=>{const p=$("#prev");if(p)p.innerHTML=imgs.map((s,i)=>`<div><img src="${s}"><button type="button" onclick="rmImg(${i})">✕</button></div>`).join("");const c=$("#pcn");if(c)c.textContent=imgs.length+"/10"};
-const isAdmin=()=>U&&U.phoneNumber===ADMIN;
+const isAdmin=()=>U&&(U.phoneNumber===ADMIN||U.email===MAIL);
 onAuthStateChanged(auth,async u=>{U=u;if(u){try{const d=await getDoc(doc(db,"cvs",u.uid));if(d.exists())CV={...CV,...d.data()};else CV.phone=u.phoneNumber||""}catch(e){}}draw()});
-onSnapshot(collection(db,"ads"),s=>{A=s.docs.map(d=>({id:d.id,...d.data()}));if(U&&S.view!="cv"&&S.view!="set"&&S.cat!="add")draw()});
+onSnapshot(collection(db,"ads"),s=>{A=s.docs.map(d=>({id:d.id,...d.data()}));if(U&&S.view!="cv"&&S.view!="set"&&S.view!="fx"&&S.cat!="add")draw()});
 function draw(){const a=$("#app"),n=$("#nav");
 if(!U){n.style.display="none";const ph=S.mode=="phone";a.innerHTML=`<div class="login"><img src="silva-logo.png" style="width:150px;height:150px;border-radius:50%"><h2>بخێر بێی بۆ Silva App</h2>
 <div class="chips" style="justify-content:center"><button class="${ph?"":"g"}" onclick="S.mode='phone';draw()">ژمارا مۆبایلێ</button><button class="${ph?"g":""}" onclick="S.mode='email';draw()">ئیمەیل</button></div>
 ${ph?`<input id="ph" type="tel" dir="ltr" placeholder="07xx xxx xxxx">${S.sent?`<input id="cd" dir="ltr" placeholder="کۆدا SMS" maxlength="6"><button class="full" onclick="verify()">چوونەژوور</button>`:`<button class="full" onclick="sendCode()">کۆدی بنێرە</button>`}`:`<input id="em" type="email" dir="ltr" placeholder="Email"><input id="pw" type="password" dir="ltr" placeholder="Password (6+)"><div class="row"><button onclick="emailAuth(0)">چوونەژوور</button><button class="g" onclick="emailAuth(1)">هەژمارەکا نوی</button></div>`}</div>`;return}
-n.style.display="flex";n.innerHTML=[["cv","📄","CV"],["shop","🛍️","دوکان"],["land","🏠","ئەرد"],["car","🚗","ترومبێل"],["job","💼","کار"],["set","⚙️","ڕێکخستن"]].map(x=>`<button class="${S.view==x[0]?"on":""}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("");
-a.innerHTML=S.view=="cv"?cvView():S.view=="set"?setView():catView(S.view)}
-const W=o=>Object.assign(window,o);W({S,draw,go:v=>{S.view=v;S.cat="";S.K=S.Q=S.CT="";S.PF=null;draw()}});
+n.style.display="flex";n.innerHTML=[["cv","📄","CV"],["shop","🛍️","دوکان"],["land","🏠","ئەرد"],["car","🚗","ترومبێل"],["job","💼","کار"],["fx","💱","نرخ"],["set","⚙️","ڕێکخستن"]].map(x=>`<button class="${S.view==x[0]?"on":""}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("");
+a.innerHTML=S.view=="cv"?cvView():S.view=="set"?setView():S.view=="fx"?fxView():catView(S.view)}
+const W=o=>Object.assign(window,o);W({S,draw,go:v=>{S.view=v;S.edit=0;S.cat="";S.K=S.Q=S.CT="";S.PF=null;draw()}});
 W({sendCode:async()=>{const p=$("#ph").value.replace(/\D/g,"").replace(/^0+/,"").replace(/^964/,"");if(p.length<9)return alert("ژمارەکێ دروست بنڤیسە");
 try{window.rv=window.rv||new RecaptchaVerifier(auth,"rc",{size:"invisible"});conf=await signInWithPhoneNumber(auth,"+964"+p,window.rv);S.sent=1;draw()}catch(e){alert("خەلەتی: "+e.code);try{window.rv.clear()}catch(_){}window.rv=null}},
 verify:async()=>{try{await conf.confirm($("#cd").value.trim());S.sent=0}catch(e){alert("کۆد خەلەتە")}},
@@ -104,6 +104,23 @@ lb:(id,i)=>{const x=A.find(y=>y.id==id);if(!x)return;const a=x.imgs&&x.imgs.leng
 addItem:async v=>{const g=i=>$("#"+i).value.trim(),fee=+g("fee");if(!g("t"))return alert("سەردێرێ بنڤیسە");if(fee&&!g("rc"))return alert("ژمارا وەسڵێ بنڤیسە");if(imgs.join("").length>850000)return alert("وێنە گەلەک مەزنن، هندەک ژێببە");
 try{await addDoc(collection(db,"ads"),{uid:U.uid,cat:v,t:g("t"),k:g("k"),x:g("x"),p:g("p"),c:g("c"),d:g("d"),ph:g("ph"),img:imgs[0]||"",imgs,vip:false,vipReq:fee>0,fee,pm:S.PM,rc:g("rc"),ts:Date.now()});S.cat="";S.PF=null;draw()}catch(e){alert("خەلەتی: "+e.code)}},
 delAd:async id=>{if(confirm("ژێ ببە؟"))try{await deleteDoc(doc(db,"ads",id))}catch(e){alert(e.code)}},vipAd:async(id,b)=>{try{await updateDoc(doc(db,"ads",id),{vip:b})}catch(e){alert(e.code)}}});
+/* Rates */
+let R={c:{}},FX={};
+const CITIES=[["duhok","دهۆک"],["erbil","هەولێر"],["sul","سلێمانی"]],nf=v=>v?Number(v).toLocaleString("en-US"):"—";
+onSnapshot(doc(db,"rates","main"),s=>{R=s.exists()?s.data():{c:{}};if(U&&S.view=="fx"&&!S.edit)draw()},()=>{});
+async function loadFX(){try{const r=await fetch("https://open.er-api.com/v6/latest/USD"),j=await r.json();if(j.rates&&j.rates.IQD)FX.iqd=j.rates.IQD}catch(e){}
+try{const r=await fetch("https://api.gold-api.com/price/XAU"),j=await r.json();if(j.price)FX.oz=j.price}catch(e){}
+FX.t=Date.now();if(U&&S.view=="fx"&&!S.edit)draw()}
+loadFX();setInterval(loadFX,600000);
+function fxView(){const ad=isAdmin(),c=R.c||{},u=R.upd?new Date(R.upd).toLocaleString("en-GB"):"—";
+const g21=FX.oz?FX.oz/31.1035*5*21/24:0,g18=FX.oz?FX.oz/31.1035*5*18/24:0;
+const ref=(FX.iqd||FX.oz)?`<div class="card"><b>🌍 نرخێ جیهانی (ئۆتۆماتیک)</b><div style="color:var(--mu);font-size:13px;margin-top:6px;line-height:2">${FX.iqd?`💵 ١٠٠$ = <b>${nf(Math.round(FX.iqd*100))}</b> دینار (نرخێ ڕەسمی)<br>`:""}${FX.oz?`🥇 ئۆنسا زێڕی: <b>${nf(Math.round(FX.oz))}$</b><br>مسقالەک ٢١ = <b>${nf(Math.round(g21))}$</b>${FX.iqd?` ≈ ${nf(Math.round(g21*FX.iqd/1000)*1000)} د.ع`:""}<br>مسقالەک ١٨ = <b>${nf(Math.round(g18))}$</b>`:""}</div></div>`:"";
+const edit=ad&&S.edit;
+const cards=CITIES.map(([k,n])=>{const x=c[k]||{};return edit?`<div class="card"><b>🏙️ ${n}</b><div class="row"><div><label>کڕینا ١٠٠$</label><input id="b_${k}" type="number" inputmode="numeric" dir="ltr" value="${x.b||""}"></div><div><label>فرۆتنا ١٠٠$</label><input id="s_${k}" type="number" inputmode="numeric" dir="ltr" value="${x.s||""}"></div></div><div class="row"><div><label>زێڕ ٢١ (مسقال)</label><input id="g21_${k}" type="number" inputmode="numeric" dir="ltr" value="${x.g21||""}"></div><div><label>زێڕ ١٨ (مسقال)</label><input id="g18_${k}" type="number" inputmode="numeric" dir="ltr" value="${x.g18||""}"></div></div></div>`:
+`<div class="card"><b>🏙️ ${n}</b><div class="row" style="margin-top:8px"><div><span class="tag" style="color:#16a34a">کڕین</span><div class="pr" dir="ltr" style="text-align:right;font-size:18px">${nf(x.b)}</div></div><div><span class="tag" style="color:#e11d48">فرۆتن</span><div class="pr" dir="ltr" style="text-align:right;font-size:18px">${nf(x.s)}</div></div></div><div style="color:var(--mu);font-size:13px;margin-top:8px;line-height:1.9">🥇 زێڕ ٢١: <b>${nf(x.g21)}</b> • ١٨: <b>${nf(x.g18)}</b> <span style="font-size:11px">(مسقالەک / دینار)</span></div></div>`}).join("");
+return`<h2>💱 نرخێ دۆلار و زێڕی</h2><p style="color:var(--mu);font-size:13px;margin:0 0 10px">نرخێ ١٠٠ دۆلارێ ب دیناری عیراقی • نویکرن: ${u}</p>${cards}${ref}
+${ad?(edit?`<div class="row"><button onclick="saveFx()">💾 تۆمارکرن</button><button class="g" onclick="S.edit=0;draw()">پاشڤە</button></div>`:`<button class="full" onclick="S.edit=1;draw()">✏️ نویکرنا نرخان (ئەدمین)</button>`):""}`}
+W({saveFx:async()=>{const c={};CITIES.forEach(([k])=>{c[k]={b:+$("#b_"+k).value||0,s:+$("#s_"+k).value||0,g21:+$("#g21_"+k).value||0,g18:+$("#g18_"+k).value||0}});try{await setDoc(doc(db,"rates","main"),{c,upd:Date.now()});S.edit=0;draw()}catch(e){alert("خەلەتی: "+e.code)}}});
 function setView(){return`<h2>⚙️ ڕێکخستن</h2><div class="card"><b>هەژمار</b><p dir="ltr" style="text-align:right">${esc(U.phoneNumber||U.email)}</p>${isAdmin()?"<p>👑 ئەدمین</p>":""}</div>
 <div class="card"><b>📞 پەیوەندی</b><div class="row" style="margin-top:8px"><a href="https://wa.me/${WA}" target="_blank" style="text-decoration:none"><button class="full">💬 واتساب</button></a><a href="mailto:${MAIL}" style="text-decoration:none"><button class="g full">✉️ ئیمەیل</button></a></div><p dir="ltr" style="text-align:right;color:var(--mu);font-size:13px">07513578668<br>${MAIL}</p></div>
 <a href="privacy.html" target="_blank" style="text-decoration:none"><button class="g full" style="margin-bottom:8px">🔒 سیاسەتا نهێنیێ</button></a><button class="g full" onclick="logout()">دەرکەتن</button>`}
