@@ -2,7 +2,7 @@
 <html lang="ku" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Silva App</title>
-<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#111111"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#111111"><link rel="icon" href="silva-192.png"><link rel="apple-touch-icon" href="silva-192.png">
 <style>
 :root{--bg:#f4f6fb;--card:#fff;--tx:#1b2430;--mu:#6b7686;--pr:#1f7a6d;--bd:#e2e7ef}
 @media(prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a222c;--tx:#eef2f7;--mu:#9aa6b6;--bd:#2a3542;--pr:#3bb5a3;color-scheme:dark}}
@@ -48,7 +48,7 @@ const isAdmin=()=>U&&U.phoneNumber===ADMIN;
 onAuthStateChanged(auth,async u=>{U=u;if(u){try{const d=await getDoc(doc(db,"cvs",u.uid));if(d.exists())CV={...CV,...d.data()};else CV.phone=u.phoneNumber||""}catch(e){}}draw()});
 onSnapshot(collection(db,"ads"),s=>{A=s.docs.map(d=>({id:d.id,...d.data()}));if(U&&S.view!="cv"&&S.view!="set"&&S.cat!="add")draw()});
 function draw(){const a=$("#app"),n=$("#nav");
-if(!U){n.style.display="none";const ph=S.mode=="phone";a.innerHTML=`<div class="login"><img src="logo.png" style="width:150px;height:150px;border-radius:50%"><h2>بخێر بێی بۆ Silva App</h2>
+if(!U){n.style.display="none";const ph=S.mode=="phone";a.innerHTML=`<div class="login"><img src="silva-logo.png" style="width:150px;height:150px;border-radius:50%"><h2>بخێر بێی بۆ Silva App</h2>
 <div class="chips" style="justify-content:center"><button class="${ph?"":"g"}" onclick="S.mode='phone';draw()">ژمارا مۆبایلێ</button><button class="${ph?"g":""}" onclick="S.mode='email';draw()">ئیمەیل</button></div>
 ${ph?`<input id="ph" type="tel" dir="ltr" placeholder="07xx xxx xxxx">${S.sent?`<input id="cd" dir="ltr" placeholder="کۆدا SMS" maxlength="6"><button class="full" onclick="verify()">چوونەژوور</button>`:`<button class="full" onclick="sendCode()">کۆدی بنێرە</button>`}`:`<input id="em" type="email" dir="ltr" placeholder="Email"><input id="pw" type="password" dir="ltr" placeholder="Password (6+)"><div class="row"><button onclick="emailAuth(0)">چوونەژوور</button><button class="g" onclick="emailAuth(1)">هەژمارەکا نوی</button></div>`}</div>`;return}
 n.style.display="flex";n.innerHTML=[["cv","📄","CV"],["shop","🛍️","دوکان"],["land","🏠","ئەرد"],["car","🚗","ترومبێل"],["job","💼","کار"],["set","⚙️","ڕێکخستن"]].map(x=>`<button class="${S.view==x[0]?"on":""}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("");
