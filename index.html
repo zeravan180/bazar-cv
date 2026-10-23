@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Silva App</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#111111"><link rel="icon" href="silva-192.png"><link rel="apple-touch-icon" href="silva-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css">
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1b2430;--mu:#6b7686;--pr:#1f7a6d;--bd:#e2e7ef}
+@media(prefers-color-scheme:dark){:root{--bg:#10151c;--card:#1a222c;--tx:#eef2f7;--mu:#9aa6b6;--bd:#2a3542;--pr:#3bb5a3;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:Tahoma,Arial,sans-serif;padding:env(safe-area-inset-top) 0 80px}
+.w{max-width:560px;margin:auto;padding:14px}h2{margin:6px 0 12px;font-size:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px}
+input,select,textarea{width:100%;padding:10px;margin:4px 0 8px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+label{font-size:13px;color:var(--mu)}button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--pr);color:#fff;cursor:pointer}
+button.g{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}.full{width:100%}.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--bd);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;color:var(--mu);border-radius:0;padding:8px 1px;font-size:10px}nav button.on{color:var(--pr);font-weight:bold}nav span{display:block;font-size:20px}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:2px 10px;font-size:12px;color:var(--mu);margin-left:4px}
+.pr{color:var(--pr);font-weight:bold}.img{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+.sw{width:30px;height:30px;border-radius:50%;padding:0;flex:none}.chips{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}.chips button{flex:none;padding:6px 14px;border-radius:20px}
+.cv{background:#fff;color:#222;border-radius:10px;overflow:hidden;font-size:13px;line-height:1.7;border:1px solid var(--bd)}
+.cv h1{margin:0;font-size:22px}.cv h4{margin:10px 0 3px;color:var(--c);border-bottom:2px solid var(--c)}.cv .p{padding:14px}.cv .hd{background:var(--c);color:#fff;padding:16px}
+.t2{display:flex}.t2 .sd{background:var(--c);color:#fff;width:35%;padding:14px}.t2 .mn{flex:1;padding:14px}
+.t3 .hd{background:none;color:#222;text-align:center;border-bottom:4px solid var(--c)}.t4 .p{background:linear-gradient(var(--c)22,#fff)}.t4 h4{background:var(--c);color:#fff;padding:3px 10px;border-radius:20px;border:0}
+.gal{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;margin-bottom:8px;direction:ltr}.gal img{flex:none;width:100%;height:200px;object-fit:cover;border-radius:10px;scroll-snap-align:center}
+.cnt{position:absolute;top:8px;left:8px;background:#000a;color:#fff;border-radius:12px;padding:2px 8px;font-size:12px}
+#lb{position:fixed;inset:0;background:#000;z-index:9;display:flex;align-items:center}#lb button{position:absolute;top:14px;right:14px;z-index:2}.lg{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;width:100%;direction:ltr}.lg img{flex:none;width:100%;max-height:100vh;object-fit:contain;scroll-snap-align:center}
+.pv{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.pv div{position:relative}.pv img{width:70px;height:70px;object-fit:cover;border-radius:8px}.pv button{position:absolute;top:2px;right:2px;padding:0 6px;border-radius:50%;background:#000a}
+.ban{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:linear-gradient(135deg,#0d2f2a,#1f7a6d);color:#fff;margin-bottom:12px}.ban img{width:58px;height:58px;border-radius:50%;background:#fff;flex:none}.ban b{font-size:16px}.ban small{display:block;opacity:.85;margin-top:2px}.ban button{margin-inline-start:auto;background:#fff;color:#0d2f2a;flex:none}
+.cats{display:flex;gap:8px;overflow-x:auto;margin:6px 0 10px;padding-bottom:4px}.cats button{flex:none;display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:16px;background:var(--card);color:var(--tx);border:1px solid var(--bd)}.cats button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.sec{display:flex;align-items:center;gap:10px;margin:14px 0 8px}.sec .ic{width:40px;height:40px;border-radius:12px;background:#f59e0b;display:grid;place-items:center;font-size:20px;flex:none}.sec h3{margin:0;font-size:17px}.sec small{color:var(--mu)}
+.vc{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.vcard{flex:none;width:76%;scroll-snap-align:start;background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:8px;cursor:pointer}
+.vimg{height:190px;border-radius:16px;background:linear-gradient(135deg,#1f2a37,#2a3542) center/cover;position:relative;display:grid;place-items:center}.vimg .big{font-size:56px;position:static}.vimg span{position:absolute}.vimg .big{position:static}
+.b1{top:10px;inset-inline-start:10px;background:#f59e0b;color:#222;font-weight:bold;border-radius:20px;padding:3px 12px;font-size:12px}.b2{top:10px;inset-inline-end:10px;background:#0009;color:#fff;border-radius:12px;padding:3px 10px;font-size:12px}.b3{bottom:10px;inset-inline-start:10px;background:#000a;color:#fff;border-radius:20px;padding:5px 14px;font-weight:bold}
+.vt{display:block;margin:8px 4px 2px}.vs{color:var(--mu);font-size:13px;margin:0 4px 4px}
+.li{display:flex;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:8px;margin-bottom:10px;cursor:pointer}.li.v{border:2px solid #f59e0b}.li .th{width:96px;height:96px;border-radius:12px;background:linear-gradient(135deg,#1f2a37,#2a3542) center/cover;flex:none;display:grid;place-items:center;font-size:34px}.li .in{flex:1;min-width:0}
+.pill{background:var(--bd);color:var(--pr);border-radius:20px;padding:4px 14px;font-weight:bold}
+#dt{position:fixed;inset:0;background:var(--bg);z-index:8;overflow:auto}.dtw{max-width:560px;margin:auto;padding:14px 14px 40px}
+nav button.fab{flex:none;width:54px;height:54px;border-radius:50%;margin-top:-20px;font-size:30px;background:var(--pr);color:#fff;padding:0;align-self:center;box-shadow:0 4px 12px #0006}
+.mapbox{height:calc(100vh - 240px);min-height:320px;border-radius:18px;overflow:hidden;border:1px solid var(--bd);margin-top:6px}.mk{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:16px;border:3px solid #fff;box-shadow:0 2px 6px #0006;color:#fff}.leaflet-container{font-family:inherit}.leaflet-popup-content button{margin-top:6px;padding:6px 12px}
+pre{white-space:pre-wrap;margin:0;font:inherit}.login{text-align:center;margin-top:8vh}
+.hrt{position:absolute;top:6px;inset-inline-end:6px;background:var(--card);border:1px solid var(--bd);border-radius:50%;width:34px;height:34px;padding:0;font-size:16px;z-index:2}.li{position:relative}.li.sold{opacity:.55}.mk{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;font-size:16px}
+</style></head><body>
+<div class="w" id="app"></div><nav id="nav"></nav><div id="rc"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,onAuthStateChanged,signOut,RecaptchaVerifier,signInWithPhoneNumber,signInWithEmailAndPassword,createUserWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,deleteUser}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,addDoc,onSnapshot,deleteDoc,doc,updateDoc,setDoc,getDoc,increment}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyD4bdVNQHdPdUSArJWGzR07Bp1TsuoLm9o",authDomain:"bazar-cv.firebaseapp.com",projectId:"bazar-cv",storageBucket:"bazar-cv.firebasestorage.app",messagingSenderId:"814526110950",appId:"1:814526110950:web:18b9169f67890477366f27"});
+const auth=getAuth(app),db=getFirestore(app);
+const $=s=>document.querySelector(s),esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ADMIN="+9647504211356",PAY="07504211356",WA="9647513578668",MAIL="zeravan180@gmail.com";
+const COLORS=["#1f7a6d","#2563eb","#c026d3","#e11d48","#ea580c","#334155"],TPL=["کلاسیک","مۆدێرن","سادە","جوان"];
+const CATS={shop:{n:"دوکان",i:"🛍️",x:"جۆرێ بەرهەمی",k:["نوو","بکارهاتی"]},phone:{n:"مۆبایل و ئەلیکترۆنیات",i:"📱",x:"مۆدێل و بارودۆخ",k:["نوو","بکارهاتی"]},furn:{n:"کەلوپەل",i:"🛋️",x:"جۆر",k:["نوو","بکارهاتی"]},land:{n:"ئەرد و خانی",i:"🏠",x:"ڕووبەر (م²)",k:["فرۆتن","کڕین","کرێ"]},rent:{n:"کرێ و ئیجار",i:"🔑",x:"ڕووبەر / ژمارا ژوورا",k:["دوکان بۆ کرێ","خانی بۆ کرێ","شقە بۆ کرێ","ئۆفیس بۆ کرێ","مەخزەن بۆ کرێ"]},car:{n:"ترومبێل",i:"🚗",x:"مۆدێل و ساڵ",k:["فرۆتن","کڕین"]},srv:{n:"خزمەتگوزاری",i:"🛠️",x:"جۆرێ خزمەتێ",k:["پێشکێشکرنا خزمەتێ","داخوازا خزمەتێ"]},pet:{n:"ئاژەڵ",i:"🐑",x:"جۆر",k:["فرۆتن","کڕین"]},job:{n:"کار",i:"💼",x:"مووچە",k:["خودان کار (کرێکار دڤێت)","کرێکار (کار دڤێت)"]}};
+let U=null,A=[],CV={name:"",title:"",phone:"",email:"",city:"",sum:"",skills:"",exp:"",edu:"",tpl:0,col:0},S={view:"home",C:"",AC:"shop",cat:"",K:"",Q:"",CT:"",P1:"",P2:"",SORT:"new",F:0,SEL:"",after:"",PM:"FIB",mode:"phone",sent:0,PF:null},conf=null,imgs=[],tm;
+const gal=x=>{const a=x.imgs&&x.imgs.length?x.imgs:x.img?[x.img]:[];return a.length?`<div style="position:relative"><div class="gal">${a.map((s,i)=>`<img src="${s}" onclick="lb('${x.id}',${i})">`).join("")}</div>${a.length>1?`<span class="cnt">📷 ${a.length}</span>`:""}</div>`:""};
+const shrink=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const m=new Image();m.onload=()=>{const k=Math.min(1,600/Math.max(m.width,m.height)),c=document.createElement("canvas");c.width=m.width*k;c.height=m.height*k;c.getContext("2d").drawImage(m,0,0,c.width,c.height);ok(c.toDataURL("image/jpeg",.55))};m.onerror=no;m.src=r.result};r.onerror=no;r.readAsDataURL(f)});
+const prev=()=>{const p=$("#prev");if(p)p.innerHTML=imgs.map((s,i)=>`<div><img src="${s}"><button type="button" onclick="rmImg(${i})">✕</button></div>`).join("");const c=$("#pcn");if(c)c.textContent=imgs.length+"/10"};
+const DICT=[
+["کرێ و ئیجار","کرێ و ئیجارە","إيجار","For rent"],
+["ڕووبەر / ژمارا ژوورا","ڕووبەر / ژمارەی ژوور","المساحة / عدد الغرف","Area / rooms"],
+["دوکان بۆ کرێ","دوکان بۆ کرێ","محل للإيجار","Shop for rent"],
+["خانی بۆ کرێ","خانوو بۆ کرێ","بيت للإيجار","House for rent"],
+["شقە بۆ کرێ","شوقە بۆ کرێ","شقة للإيجار","Apartment for rent"],
+["ئۆفیس بۆ کرێ","ئۆفیس بۆ کرێ","مكتب للإيجار","Office for rent"],
+["مەخزەن بۆ کرێ","مەخزەن بۆ کرێ","مخزن للإيجار","Warehouse for rent"],
+["پاسوۆرد وەک ئێک نینن","پاسوۆردەکان وەک یەک نین","كلمتا المرور غير متطابقتين","Passwords do not match"],
+["شارێ خۆ بنڤیسە","شارەکەت بنووسە","اكتب مدينتك","Enter your city"],
+["دووبارە پاسوۆرد","دووبارە پاسوۆرد","أعد كلمة المرور","Repeat password"],
+["تۆمارکرن","تۆمارکردن","تسجيل","Register"],
+["بەکارهێنەر","بەکارهێنەر","المستخدمون","Users"],
+["ڕیکلام","ڕیکلام","الإعلانات","Ads"],
+["ڕیکلامان","ڕیکلامەکان","الإعلانات","ads"],
+["قەدەغەکرن؟","قەدەغە بکرێت؟","حظر؟","Ban this user?"],
+["قەدەغە لابەرن؟","قەدەغە لابەرێت؟","إلغاء الحظر؟","Unban?"],
+["هەمی ڕیکلامێن ڤی کەسی ژێببە؟","هەموو ڕیکلامەکانی ئەم کەسە بسڕدرێنەوە؟","حذف جميع إعلانات هذا المستخدم؟","Delete all ads of this user?"],
+["ئاماری ئەدمین","ئاماری ئەدمین","إحصائيات المشرف","Admin stats"],
+["تۆمارا پارەدانان","تۆماری پارەدانەکان","سجل المدفوعات","Payments log"],
+["مەرجێن بکارئینانێ","مەرجەکانی بەکارهێنان","شروط الاستخدام","Terms of use"],
+["هنارتنا ئەپی","ناردنی ئەپەکە","مشاركة التطبيق","Share the app"],
+["چ نینە","هیچ نییە","لا يوجد","None"],
+["چالاک","چالاک","نشط","Active"],
+["ژێبرنا هەژمارێ","سڕینەوەی هەژمار","حذف الحساب","Delete account"],
+["دولار","دۆلار","دولار","USD"],
+["دینار","دینار","دينار","IQD"],
+["ڕیکلام هاتە نویکرن","ڕیکلام نوێکرایەوە","تم تجديد الإعلان","Ad renewed"],
+["ژمارا واتساب دروست بنڤیسە","ژمارەی واتساپی دروست بنووسە","اكتب رقم واتساب صحيح","Enter a valid WhatsApp number"],
+["هەژمارا تە و هەمی ڕیکلامێن تە دێ هێنە ژێبرن. دڵنیایی؟","هەژمارەکەت و هەموو ڕیکلامەکانت دەسڕدرێنەوە. دڵنیایت؟","سيتم حذف حسابك وجميع إعلاناتك. هل أنت متأكد؟","Your account and all your ads will be deleted. Are you sure?"],
+["هەژمار هاتە ژێبرن","هەژمار سڕایەوە","تم حذف الحساب","Account deleted"],
+["دەرکەڤە و دووبارە بچە ژوور، پاشی هەول بدە","بچۆ دەرەوە و دووبارە بچۆرە ژوور، پاشان هەوڵ بدەرەوە","سجّل الخروج ثم الدخول مجددًا ثم حاول","Log out, log in again, then retry"],
+["بدویماهی هات","کاتەکەی تەواو بوو","انتهت مدته","Expired"],
+["پاشەکەفتکرن","پاشەکەوتکردن","حفظ","Save"],
+["چ ڕیکلامێن تە نینن","هیچ ڕیکلامێکت نییە","ليس لديك إعلانات","You have no ads"],
+["بخێر بێی بۆ Silva App","بەخێربێیت بۆ Silva App","أهلاً بك في Silva App","Welcome to Silva App"],
+["ژمارا مۆبایلێ","ژمارەی مۆبایل","رقم الهاتف","Phone number"],
+["ئیمەیل","ئیمەیڵ","البريد الإلكتروني","Email"],
+["کۆدی بنێرە","کۆد بنێرە","أرسل الرمز","Send code"],
+["کۆدا SMS","کۆدی SMS","رمز SMS","SMS code"],
+["چوونەژوور","چوونەژوورەوە","تسجيل الدخول","Sign in"],
+["هەژمارەکا نوی","هەژمارێکی نوێ","حساب جديد","New account"],
+["نرخ","نرخ","الأسعار","Rates"],
+["ڕێکخستن","ڕێکخستنەکان","الإعدادات","Settings"],
+["دوکان","دوکان","المتاجر","Shops"],
+["ئەرد","زەوی","الأراضي","Land"],
+["ئەرد و خانی","زەوی و خانوو","أراضٍ وبيوت","Land & Houses"],
+["ترومبێل","ئۆتۆمبێل","السيارات","Cars"],
+["کار","کار","الوظائف","Jobs"],
+["نوو","نوێ","جديد","New"],
+["بکارهاتی","بەکارهاتوو","مستعمل","Used"],
+["فرۆتن","فرۆشتن","بيع","Sell"],
+["کڕین","کڕین","شراء","Buy"],
+["کرێ","کرێ","إيجار","Rent"],
+["خودان کار (کرێکار دڤێت)","خاوەنکار (کرێکار دەوێت)","صاحب عمل (يبحث عن عامل)","Employer (hiring)"],
+["کرێکار (کار دڤێت)","کرێکار (کار دەوێت)","عامل (يبحث عن عمل)","Worker (seeking work)"],
+["جۆرێ بەرهەمی","جۆری بەرهەم","نوع المنتج","Product type"],
+["ڕووبەر (م²)","ڕووبەر (م²)","المساحة (م²)","Area (m²)"],
+["مۆدێل و ساڵ","مۆدێل و ساڵ","الموديل والسنة","Model & year"],
+["مووچە","مووچە","الراتب","Salary"],
+["بگەڕێ...","بگەڕێ...","ابحث...","Search..."],
+["شار","شار","المدينة","City"],
+["زێدەکرن","زیادکردن","إضافة","Add"],
+["هەمی","هەموو","الكل","All"],
+["چ تشت نینە","هیچ نییە","لا يوجد شيء","Nothing here"],
+["⏳ چاڤەڕێ پشتڕاستکرنێ","چاوەڕێی پشتڕاستکردنەوە","بانتظار التأكيد","Awaiting confirmation"],
+["هنارتنا وەسڵێ ب واتساب","ناردنی وەسڵ بە واتساپ","إرسال الإيصال عبر واتساب","Send receipt via WhatsApp"],
+["واتساب","واتساپ","واتساب","WhatsApp"],
+["جۆر","جۆر","النوع","Type"],
+["سەردێر","ناونیشان","العنوان","Title"],
+["نرخ / مووچە","نرخ / مووچە","السعر / الراتب","Price / Salary"],
+["وەسف","وەسف","الوصف","Description"],
+["ژمارا واتساب","ژمارەی واتساپ","رقم واتساب","WhatsApp number"],
+["وێنە (هەتا ١٠)","وێنە (تا ١٠)","الصور (حتى 10)","Photos (up to 10)"],
+["بەلاڤکرن","بڵاوکردنەوە","نشر","Publish"],
+["هنارتن","ناردن","مشاركة","Share"],
+["پاشڤە","گەڕانەوە","رجوع","Back"],
+["کرێیا بەلاڤکرنێ","کرێی بڵاوکردنەوە","رسوم النشر","Promotion fee"],
+["بێ پارە — ئاسایی","بێ پارە — ئاسایی","مجاني — عادي","Free — normal"],
+["1,000 — ٧ ڕۆژ","1,000 — ٧ ڕۆژ","1,000 — 7 أيام","1,000 — 7 days"],
+["2,000 — ١٥ ڕۆژ","2,000 — ١٥ ڕۆژ","2,000 — 15 يوماً","2,000 — 15 days"],
+["3,000 — ٣٠ ڕۆژ","3,000 — ٣٠ ڕۆژ","3,000 — 30 يوماً","3,000 — 30 days"],
+["5,000 — ٣ مانگ","5,000 — ٣ مانگ","5,000 — 3 أشهر","5,000 — 3 months"],
+["ئەوێ پارەی بدەت ڕیکلامێ وی دچیتە سەری و VIP دبیت.","ئەوەی پارە بدات ڕیکلامەکەی دەچێتە سەرەوە و دەبێتە VIP.","من يدفع يظهر إعلانه في الأعلى ويصبح VIP.","Pay and your ad goes to the top and becomes VIP."],
+["باڕکۆد سکین بکە ب","باڕکۆد سکان بکە بە","امسح الباركود بـ","Scan the QR code with"],
+["کۆپیکرنا ژمارەیێ","لەبەرگرتنەوەی ژمارە","نسخ الرقم","Copy number"],
+["ژمارا وەسڵێ یان ناڤێ هنێرەر","ژمارەی وەسڵ یان ناوی ناردەر","رقم الإيصال أو اسم المرسل","Receipt number or sender name"],
+["کۆپی بوو","لەبەرگیرایەوە","تم النسخ","Copied"],
+["وێنە گەلەک مەزنن، هندەک ژێببە","وێنەکان زۆر گەورەن، هەندێک بسڕەوە","الصور كبيرة جداً، احذف بعضها","Photos are too large, remove some"],
+["سەردێرێ بنڤیسە","ناونیشان بنووسە","اكتب العنوان","Enter a title"],
+["ژمارا وەسڵێ بنڤیسە","ژمارەی وەسڵ بنووسە","اكتب رقم الإيصال","Enter the receipt number"],
+["ژێ ببە؟","بسڕدرێتەوە؟","هل تريد الحذف؟","Delete?"],
+["ژمارەکێ دروست بنڤیسە","ژمارەیەکی دروست بنووسە","اكتب رقماً صحيحاً","Enter a valid number"],
+["خەلەتی: ","هەڵە: ","خطأ: ","Error: "],
+["کۆد خەلەتە","کۆدەکە هەڵەیە","الرمز خاطئ","Wrong code"],
+["نرخێ ئۆتۆماتیک هێشتا نەهاتیە، دووبارە هەول بدە","نرخی ئۆتۆماتیک هێشتا نەهاتووە، دووبارە هەوڵ بدەرەوە","لم يصل السعر التلقائي بعد، حاول مجدداً","Auto rate not loaded yet, try again"],
+["ناڤ","ناو","الاسم","Name"],
+["پیشە","پیشە","المهنة","Profession"],
+["دەربارەی من","دەربارەی من","نبذة عني","About me"],
+["شارەزایی (ب کۆما)","شارەزایی (بە فاریزە)","المهارات (مفصولة بفاصلة)","Skills (comma-separated)"],
+["ئەزموون","ئەزموون","الخبرة","Experience"],
+["خوێندن","خوێندن","التعليم","Education"],
+["CV ـا من","CVی من","سيرتي الذاتية CV","My CV"],
+["کلاسیک","کلاسیک","كلاسيكي","Classic"],
+["مۆدێرن","مۆدێرن","عصري","Modern"],
+["سادە","سادە","بسيط","Simple"],
+["جوان","جوان","جميل","Elegant"],
+["بەلاڤکرنا CV ل بەشێ کار","بڵاوکردنەوەی CV لە بەشی کار","نشر السيرة الذاتية في قسم الوظائف","Publish CV in Jobs"],
+["دەربارە","دەربارە","نبذة","About"],
+["شارەزایی","شارەزایی","المهارات","Skills"],
+["ناڤێ تە","ناوی تۆ","اسمك","Your name"],
+["نرخێ دۆلار و زێڕی","نرخی دۆلار و زێڕ","أسعار الدولار والذهب","Dollar & Gold Rates"],
+["نرخێ ١٠٠ دۆلارێ ب دیناری عیراقی","نرخی ١٠٠ دۆلار بە دیناری عێراقی","سعر 100 دولار بالدينار العراقي","Price of $100 in Iraqi dinars"],
+["نویکرنا ئەدمینی","نوێکردنەوەی ئەدمین","تحديث المشرف","Admin update"],
+["ئەگەر ئەدمین نرخ نەنڤیسین (یان پتر ژ ٣٦ دەمژمێران بووی)، نرخ ب ئۆتۆماتیک ژ بازارا جیهانی دهێنە خەمڵاندن.","ئەگەر ئەدمین نرخی نەنووسیبێت (یان لە ٣٦ کاتژمێر زیاتر بووبێت)، نرخەکان بە ئۆتۆماتیک لە بازاڕی جیهانییەوە خەمڵێندراون.","إذا لم يُدخل المشرف الأسعار (أو مرّ أكثر من 36 ساعة)، تُقدَّر الأسعار تلقائياً من السوق العالمية.","If the admin hasn't entered rates (or 36+ hours have passed), rates are estimated automatically from the global market."],
+["نرخێ جیهانی (ئۆتۆماتیک)","نرخی جیهانی (ئۆتۆماتیک)","السعر العالمي (تلقائي)","Global rate (automatic)"],
+["دینار (نرخێ ڕەسمی)","دینار (نرخی فەرمی)","دينار (السعر الرسمي)","dinars (official rate)"],
+["ئۆنسا زێڕی","ئۆنسی زێڕ","أونصة الذهب","Gold ounce"],
+["مسقالەک ٢١","مسقاڵێک ٢١","مثقال عيار 21","21K mithqal"],
+["مسقالەک ١٨","مسقاڵێک ١٨","مثقال عيار 18","18K mithqal"],
+["د.ع","د.ع","د.ع","IQD"],
+["دهۆک","دهۆک","دهوك","Duhok"],
+["هەولێر","هەولێر","أربيل","Erbil"],
+["سلێمانی","سلێمانی","السليمانية","Sulaymaniyah"],
+["کڕینا ١٠٠$","کڕینی ١٠٠$","شراء 100$","Buy $100"],
+["فرۆتنا ١٠٠$","فرۆشتنی ١٠٠$","بيع 100$","Sell $100"],
+["زێڕ ٢١ (مسقال)","زێڕی ٢١ (مسقاڵ)","ذهب 21 (مثقال)","Gold 21K (mithqal)"],
+["زێڕ ١٨ (مسقال)","زێڕی ١٨ (مسقاڵ)","ذهب 18 (مثقال)","Gold 18K (mithqal)"],
+["زێڕ ٢١","زێڕی ٢١","ذهب 21","Gold 21K"],
+["زێڕ ١٨","زێڕی ١٨","ذهب 18","Gold 18K"],
+["(مسقالەک / دینار)","(مسقاڵێک / دینار)","(المثقال / دينار)","(per mithqal / dinar)"],
+["ئۆتۆماتیک (خەمڵاندن)","ئۆتۆماتیک (خەمڵاندن)","تلقائي (تقديري)","Automatic (estimate)"],
+["نرخێ باژێری","نرخی شار","سعر المدينة","City rate"],
+["پڕکرنا ب نرخێ ئۆتۆماتیک","پڕکردنەوە بە نرخی ئۆتۆماتیک","تعبئة بالسعر التلقائي","Fill with auto rate"],
+["تۆمارکرن","پاشەکەوتکردن","حفظ","Save"],
+["نویکرنا نرخان (ئەدمین)","نوێکردنەوەی نرخەکان (ئەدمین)","تحديث الأسعار (مشرف)","Update rates (admin)"],
+["هەژمار","هەژمار","الحساب","Account"],
+["ئەدمین","ئەدمین","مشرف","Admin"],
+["پەیوەندی","پەیوەندی","اتصل بنا","Contact"],
+["سیاسەتا نهێنیێ","سیاسەتی نهێنی","سياسة الخصوصية","Privacy policy"],
+["دەرکەتن","چوونەدەرەوە","تسجيل الخروج","Log out"],
+["زمان","زمان","اللغة","Language"],
+["چوونەژوور ب Google","چوونەژوورەوە بە Google","الدخول عبر Google","Sign in with Google"],
+["یان","یان","أو","or"],
+["بۆ زێدەکرنا ڕیکلامێ دڤێت بچیە ژوور","بۆ زیادکردنی ڕیکلام دەبێت بچیتە ژوورەوە","للإضافة يجب تسجيل الدخول","Sign in to post an ad"],
+["ڕیکلامێن من","ڕیکلامەکانم","إعلاناتي","My ads"],
+["ڕیکلامێن ئەڤ فرۆشیاری","ڕیکلامەکانی ئەم فرۆشیارە","إعلانات هذا البائع","This seller's ads"],
+["فرۆشیار","فرۆشیار","البائع","Seller"],
+["دڵخواز","دڵخواز","المفضلة","Favorites"],
+["فرۆتراوە","فرۆشرا","تم البيع","Sold"],
+["نویکرنەوە","نوێکردنەوە","تجديد","Renew"],
+["دەستکاریکرن","دەستکاریکردن","تعديل","Edit"],
+["بکە فرۆتراو","بیکە بە فرۆشراو","تحديد كمباع","Mark as sold"],
+["ڕیکلام چالاک بکە","چالاککردنەوە","إعادة التفعيل","Reactivate"],
+["ماوەی ڕیکلامێ بوویە","ماوەی ڕیکلام تەواو بوو","انتهت مدة الإعلان","Ad expired"],
+["ڕۆژ ماون","ڕۆژ ماوە","أيام متبقية","days left"],
+["دۆلار ($)","دۆلار ($)","دولار ($)","Dollar ($)"],
+["دینار (د.ع)","دینار (د.ع)","دينار (د.ع)","Dinar (IQD)"],
+["نوێترین","نوێترین","الأحدث","Newest"],
+["هەرزانترین","هەرزانترین","الأرخص","Cheapest"],
+["گرانترین","گرانترین","الأغلى","Most expensive"],
+["نرخ ژ ($)","نرخ لە ($)","السعر من ($)","Price from ($)"],
+["نرخ هەتا ($)","نرخ تا ($)","السعر إلى ($)","Price to ($)"],
+["مۆبایل و ئەلیکترۆنیات","مۆبایل و ئەلیکترۆنیات","الهواتف والإلكترونيات","Phones & Electronics"],
+["کەلوپەل","کەلوپەل","الأثاث","Furniture"],
+["خزمەتگوزاری","خزمەتگوزاری","الخدمات","Services"],
+["ئاژەڵ","ئاژەڵ","الحيوانات","Animals"],
+["جۆرێ خزمەتێ","جۆری خزمەتگوزاری","نوع الخدمة","Service type"],
+["پێشکێشکرنا خزمەتێ","پێشکەشکردنی خزمەت","تقديم خدمة","Offering a service"],
+["داخوازا خزمەتێ","داواکردنی خزمەت","طلب خدمة","Requesting a service"],
+["مۆدێل و بارودۆخ","مۆدێل و بارودۆخ","الموديل والحالة","Model & condition"],
+["ئامار","ئامار","الإحصائيات","Statistics"],
+["کۆی ڕیکلامان","کۆی ڕیکلامەکان","مجموع الإعلانات","Total ads"],
+["ڕیکلامێن چالاک","ڕیکلامە چالاکەکان","إعلانات نشطة","Active ads"],
+["VIP یێ چالاک","VIPی چالاک","VIP نشط","Active VIP"],
+["کۆی دیتنان","کۆی بینین","إجمالي المشاهدات","Total views"],
+["داهات (د.ع)","داهات (د.ع)","الإيرادات (د.ع)","Revenue (IQD)"],
+["پارەدانێن VIP","پارەدانەکانی VIP","مدفوعات VIP","VIP payments"],
+["چ پارەدان نینن","هیچ پارەدانێک نییە","لا توجد مدفوعات","No payments"],
+["سڕینا هەژمارێ","سڕینەوەی هەژمار","حذف الحساب","Delete account"],
+["تە ب تەمامی دڤێت هەژمارێ خۆ و هەمی ڕیکلامێن خۆ ب ڕەشکەی؟ ئەڤ کارە ناهێتە ڤەگەڕاندن.","دڵنیایت دەتەوێت هەژمارەکەت و هەموو ڕیکلامەکانت بسڕیتەوە؟ ئەم کارە ناگەڕێتەوە.","هل أنت متأكد من حذف حسابك وجميع إعلاناتك؟ لا يمكن التراجع.","Delete your account and all your ads? This cannot be undone."],
+["تکایە دەرکەڤە و دووبارە بچە ژوور، پاشی هەژمارێ ببە","تکایە دەربچۆ و دووبارە بچۆ ژوورەوە، پاشان هەژمارەکە بسڕەوە","يرجى تسجيل الخروج والدخول مجدداً ثم حذف الحساب","Please sign out, sign in again, then delete your account"],
+["مەرجێن بەکارهێنانێ","مەرجەکانی بەکارهێنان","شروط الاستخدام","Terms of use"],
+["بەلاڤکرنا ئەپی","بڵاوکردنەوەی ئەپ","مشاركة التطبيق","Share the app"],
+["ژمارا واتساب بنڤیسە","ژمارەی واتساپ بنووسە","اكتب رقم واتساب","Enter a WhatsApp number"],
+["ئەڤ ڕیکلامە ئیدی نینە","ئەم ڕیکلامە نەماوە","هذا الإعلان لم يعد متاحاً","This ad is no longer available"],
+["سەرەکی","سەرەکی","الرئيسية","Home"],
+["نەخشە","نەخشە","الخريطة","Map"],
+["جهێ ڕیکلامێ ل سەر نەخشەی","شوێنی ڕیکلام لەسەر نەخشە","موقع الإعلان على الخريطة","Ad location on map"],
+["جهێ من","شوێنی من","موقعي","My location"],
+["سەر نەخشەی بگرە دا جهی دیار بکەی","لەسەر نەخشە کلیک بکە بۆ دیاریکردنی شوێن","اضغط على الخريطة لتحديد الموقع","Tap the map to set the location"],
+["ڕیکلام ل سەر نەخشەی","ڕیکلام لەسەر نەخشە","إعلان على الخريطة","ads on map"],
+["وردەکاری","وردەکاری","التفاصيل","Details"],
+["نەشێین جهێ تە بینین، ڕێگەدانێ ل ئەپی بکە","نەمانتوانی شوێنەکەت بدۆزینەوە، ڕێگەپێدان بدە","تعذّر تحديد موقعك، اسمح بالوصول للموقع","Couldn't get your location, allow location access"],
+["کڕین و فرۆتن","کڕین و فرۆشتن","بيع وشراء","Buy & sell"],
+["ڕیکلامێ خۆ ب ئاسانی بەلاڤ بکە","ڕیکلامەکەت بە ئاسانی بڵاو بکەرەوە","انشر إعلانك بسهولة","Post your ad easily"],
+["ڕیکلامێن VIP","ڕیکلامەکانی VIP","إعلانات VIP","VIP ads"],
+["ڕیکلامێن تایبەت","ڕیکلامی تایبەت","إعلانات مميزة","Featured listings"],
+["لیستا ڕیکلامان","لیستی ڕیکلامەکان","قائمة الإعلانات","All listings"],
+["ڕیکلام","ڕیکلام","إعلان","ads"],
+["داخوازێن VIP","داواکارییەکانی VIP","طلبات VIP","VIP requests"],
+["پەسەندکرن","پەسەندکردن","قبول","Approve"],
+["ڕەتکرن","ڕەتکردنەوە","رفض","Reject"],
+["چ داخواز نینن","هیچ داواکارییەک نییە","لا توجد طلبات","No requests"]
+];
+const LANGS={ku:["کوردی بادینی","rtl"],ckb:["کوردی سۆرانی","rtl"],ar:["العربية","rtl"],en:["English","ltr"]},IDX={ckb:1,ar:2,en:3},M={};DICT.forEach(r=>M[r[0]]=r);
+let LANG="ku";try{LANG=localStorage.getItem("lang")||"ku";if(!LANGS[LANG])LANG="ku"}catch(e){}
+const lk=s=>{const r=M[s];return r&&r[IDX[LANG]]},t=s=>LANG=="ku"?s:(lk(s)||s),AL=()=>LANG=="en"?"left":"right";
+function tt(str){const m=str.match(/^(\s*)([\s\S]*?)(\s*)$/),c=m[2];if(!c)return str;let r=lk(c);if(r)return m[1]+r+m[3];
+const a=c.match(/^[^\p{L}\p{N}]*/u)[0],b=c.match(/[^\p{L}\p{N}]*$/u)[0],mid=c.slice(a.length,c.length-b.length);
+if(a&&(r=lk(c.slice(a.length))))return m[1]+a+r+m[3];if(b&&mid&&(r=lk(c.slice(0,c.length-b.length))))return m[1]+r+b+m[3];if((a||b)&&mid&&(r=lk(mid)))return m[1]+a+r+b+m[3];return str}
+function tr(root){document.documentElement.dir=LANGS[LANG][1];document.documentElement.lang=LANG=="ckb"?"ckb":LANG=="ku"?"ku":LANG;if(LANG=="ku")return;
+const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];while(w.nextNode())L.push(w.currentNode);
+L.forEach(n=>{const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName))return;const v=tt(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
+root.querySelectorAll("[placeholder]").forEach(e=>{const v=tt(e.getAttribute("placeholder"));e.setAttribute("placeholder",v)})}
+const langBar=()=>`<div class="chips" style="justify-content:center">${Object.keys(LANGS).map(k=>`<button class="${LANG==k?"":"g"}" onclick="setLang('${k}')">${LANGS[k][0]}</button>`).join("")}</div>`;
+const isAdmin=()=>U&&(U.phoneNumber===ADMIN||U.email===MAIL);
+const DAY=864e5,STALE=60*DAY,DAYS={1000:7,2000:15,3000:30,5000:90},CITYLIST=["دهۆک","هەولێر","سلێمانی","زاخۆ","ئامێدی","عەقرە","سێمێل","زاویتە","شێخان","کەرکووک","هەڵەبجە","موسل","بەغدا","بەسرە"];
+let UL=[],BN=[];
+const vipOn=x=>!!x.vip&&(!x.vipUntil||x.vipUntil>Date.now());
+let FAV=[];try{FAV=JSON.parse(localStorage.getItem("fav")||"[]")}catch(e){}
+const DL=new URLSearchParams(location.search).get("ad"),W=o=>Object.assign(window,o);
+onAuthStateChanged(auth,async u=>{U=u;if(u){try{const d=await getDoc(doc(db,"cvs",u.uid));if(d.exists())CV={...CV,...d.data()};else CV.phone=u.phoneNumber||""}catch(e){}
+if(S.REGC){if(!CV.city)CV.city=S.REGC;try{await setDoc(doc(db,"cvs",u.uid),{city:CV.city},{merge:true})}catch(e){}}
+try{await setDoc(doc(db,"users",u.uid),{n:u.displayName||CV.name||"",e:u.email||"",p:u.phoneNumber||"",c:CV.city||S.REGC||"",last:Date.now()},{merge:true})}catch(e){}
+if(isAdmin()&&!window.UW){window.UW=1;onSnapshot(collection(db,"users"),s=>{UL=s.docs.map(d=>({id:d.id,...d.data()}));if(S.view=="users")draw()},()=>{});onSnapshot(collection(db,"banned"),s=>{BN=s.docs.map(d=>d.id);if(S.view=="users")draw()},()=>{})}
+if(S.view=="login"){S.view="home";if(S.after=="add"){S.after="";newAd();return}}}draw()});
+onSnapshot(collection(db,"ads"),s=>{A=s.docs.map(d=>({id:d.id,...d.data()}));
+if(DL&&!S.dl){S.dl=1;setTimeout(()=>{A.find(y=>y.id==DL)?openAd(DL):alert(t("ئەڤ ڕیکلامە ئیدی نینە"))},0)}
+if(S.view=="map")updMarkers();else if(S.view!="cv"&&S.view!="fx"&&S.view!="login"&&S.cat!="add")draw()});
+function draw(){draw0();prev();tr(document.body);if(S.view=="map")initMap();if(S.view=="home"&&S.cat=="add"&&U)initPick()}
+function draw0(){const a=$("#app"),n=$("#nav");let v=S.view;if(!U&&(v=="cv"||v=="set"))v="login";if(v=="users"&&!isAdmin())v="home";n.style.display="flex";
+const tabs=U?[["home","🏠","سەرەکی"],["map","🗺️","نەخشە"],["add","＋",""],["fx","💱","نرخ"],["cv","📄","CV"],["set","⚙️","ڕێکخستن"]]:[["home","🏠","سەرەکی"],["map","🗺️","نەخشە"],["add","＋",""],["fx","💱","نرخ"],["login","👤","چوونەژوور"]];
+n.innerHTML=tabs.map(x=>x[0]=="add"?`<button class="fab" onclick="newAd()">＋</button>`:`<button class="${v==x[0]?"on":""}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join("");
+a.innerHTML=v=="login"?loginView():v=="cv"?cvView():v=="set"?setView():v=="users"?`<button class="g" onclick="go('set')">⬅️</button><h2>👥 <span>بەکارهێنەر</span></h2>${userPanel()}`:v=="fx"?fxView():v=="map"?mapView():homeView()}
+function loginView(){const ph=S.mode=="phone";return`<div class="login"><img src="silva-logo.png" style="width:130px;height:130px;border-radius:50%"><h2>بخێر بێی بۆ Silva App</h2>${S.after=="add"?`<p style="color:var(--mu)">بۆ زێدەکرنا ڕیکلامێ دڤێت بچیە ژوور</p>`:""}${langBar()}
+<button class="full" style="background:#fff;color:#222;border:1px solid var(--bd);margin-bottom:8px" onclick="googleLogin()">🔵 چوونەژوور ب Google</button><p style="color:var(--mu);margin:6px 0">یان</p>
+<div class="chips" style="justify-content:center"><button class="${ph?"":"g"}" onclick="S.mode='phone';draw()">ژمارا مۆبایلێ</button><button class="${ph?"g":""}" onclick="S.mode='email';draw()">ئیمەیل</button></div>
+${ph?`<input id="ph" type="tel" dir="ltr" placeholder="07xx xxx xxxx">${S.sent?`<input id="cd" dir="ltr" placeholder="کۆدا SMS" maxlength="6"><button class="full" onclick="verify()">چوونەژوور</button>`:`<button class="full" onclick="sendCode()">کۆدی بنێرە</button>`}`:`<input id="em" type="email" dir="ltr" placeholder="Email"><input id="pw" type="password" dir="ltr" placeholder="Password (6+)">${S.reg?`<input id="pw2" type="password" dir="ltr" placeholder="دووبارە پاسوۆرد"><input id="cy" list="cities" placeholder="شارێ خۆ بنڤیسە"><datalist id="cities">${CITYLIST.map(c=>`<option value="${c}">`).join("")}</datalist><div class="row"><button onclick="emailAuth(1)">تۆمارکرن</button><button class="g" onclick="S.reg=0;draw()">پاشڤە</button></div>`:`<div class="row"><button onclick="emailAuth(0)">چوونەژوور</button><button class="g" onclick="S.reg=1;draw()">هەژمارەکا نوی</button></div>`}`}<p style="margin-top:14px"><a href="terms.html" target="_blank" style="color:var(--mu);font-size:13px">📜 مەرجێن بکارئینانێ</a></p></div>`}
+function go(v){S.view=v;S.edit=0;S.cat="";S.C=S.K=S.Q=S.CT=S.P1=S.P2=S.SEL="";S.F=0;S.PF=null;draw()}
+function newAd(c){if(!U){S.after="add";S.view="login";draw();return}S.LL=null;imgs=[];S.PF=null;S.EID=null;S.AC=(typeof c=="string"&&c)||S.C||"shop";S.view="home";S.cat="add";draw()}
+W({S,draw,t,go,newAd,setLang:l=>{LANG=l;try{localStorage.setItem("lang",l)}catch(e){}draw()},setC:c=>{S.C=c;S.K="";draw()}});
+W({sendCode:async()=>{const p=$("#ph").value.replace(/\D/g,"").replace(/^0+/,"").replace(/^964/,"");if(p.length<9)return alert(t("ژمارەکێ دروست بنڤیسە"));
+try{window.rv=window.rv||new RecaptchaVerifier(auth,"rc",{size:"invisible"});conf=await signInWithPhoneNumber(auth,"+964"+p,window.rv);S.sent=1;draw()}catch(e){alert(t("خەلەتی: ")+e.code);try{window.rv.clear()}catch(_){}window.rv=null}},
+verify:async()=>{try{await conf.confirm($("#cd").value.trim());S.sent=0}catch(e){alert(t("کۆد خەلەتە"))}},
+emailAuth:async r=>{try{const e=$("#em").value.trim(),p=$("#pw").value;if(r){if(p!=$("#pw2").value)return alert(t("پاسوۆرد وەک ئێک نینن"));const cy=$("#cy").value.trim();if(!cy)return alert(t("شارێ خۆ بنڤیسە"));S.REGC=cy}await(r?createUserWithEmailAndPassword:signInWithEmailAndPassword)(auth,e,p)}catch(e){alert(t("خەلەتی: ")+e.code)}},
+googleLogin:async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){alert(t("خەلەتی: ")+e.code)}},
+logout:()=>{signOut(auth);S.view="home"}});
+/* CV */
+function cvView(){const c=CV;return`<h2>📄 CV ـا من</h2><div class="card">${[["name","ناڤ"],["title","پیشە"],["phone","ژمارا مۆبایلێ"],["email","ئیمەیل"],["city","شار"]].map(f=>`<label>${f[1]}</label><input value="${esc(c[f[0]])}" oninput="cvSet('${f[0]}',this.value)">`).join("")}
+<label>دەربارەی من</label><textarea rows="2" oninput="cvSet('sum',this.value)">${esc(c.sum)}</textarea><label>شارەزایی (ب کۆما)</label><input value="${esc(c.skills)}" oninput="cvSet('skills',this.value)">
+<label>ئەزموون</label><textarea rows="3" oninput="cvSet('exp',this.value)">${esc(c.exp)}</textarea><label>خوێندن</label><textarea rows="2" oninput="cvSet('edu',this.value)">${esc(c.edu)}</textarea></div>
+<div class="chips">${TPL.map((t,i)=>`<button class="${c.tpl==i?"":"g"}" onclick="cvSet('tpl',${i},1)">${t}</button>`).join("")}</div>
+<div class="row" style="margin-bottom:10px">${COLORS.map((k,i)=>`<button class="sw" style="background:${k};${c.col==i?"outline:3px solid var(--tx)":""}" onclick="cvSet('col',${i},1)"></button>`).join("")}</div>
+<button class="full" style="margin-bottom:10px" onclick="pubCV()">📢 بەلاڤکرنا CV ل بەشێ کار</button><div id="pv">${cvHtml()}</div>
+<div class="row" style="margin-top:10px"><button onclick="shareCV()">📤 هنارتن</button><button class="g" onclick="print()">🖨️ PDF</button></div>`}
+W({cvSet:(k,v,r)=>{CV[k]=v;if(r)draw();else{$("#pv").innerHTML=cvHtml();tr($("#pv"))}clearTimeout(tm);tm=setTimeout(()=>setDoc(doc(db,"cvs",U.uid),CV).catch(()=>{}),800)},
+pubCV:()=>{S.PF={t:(CV.name+" - "+CV.title).trim(),k:CATS.job.k[1],d:CV.sum,c:CV.city};S.LL=null;imgs=[];S.AC="job";S.view="home";S.cat="add";draw()},
+shareCV:()=>{const t=`${CV.name}\n${CV.title}\n${CV.phone}\n\n${CV.sum}\n\n${CV.exp}\n\n${CV.edu}\n${CV.skills}`;navigator.share?navigator.share({text:t}).catch(()=>{}):(navigator.clipboard.writeText(t),alert(t("کۆپی بوو")))}});
+function cvHtml(){const c=CV,k=COLORS[c.col],sk=c.skills.split(/[,،]/).filter(x=>x.trim()).map(x=>`<span class="tag" style="background:#fff;color:#333">${esc(x.trim())}</span>`).join("");
+const info=`📞 ${esc(c.phone)}<br>${c.email?"✉️ "+esc(c.email)+"<br>":""}${c.city?"📍 "+esc(c.city):""}`,sec=(h,v)=>v?`<h4>${h}</h4><pre>${esc(v)}</pre>`:"";
+const b=sec("دەربارە",c.sum)+sec("ئەزموون",c.exp)+sec("خوێندن",c.edu)+(sk?`<h4>شارەزایی</h4>${sk}`:""),nm=esc(c.name||"ناڤێ تە"),tt=esc(c.title||"پیشە");
+if(c.tpl==1)return`<div class="cv t2" style="--c:${k}"><div class="sd"><h1 style="font-size:18px">${nm}</h1><div>${tt}</div><hr>${info}</div><div class="mn">${b}</div></div>`;
+return`<div class="cv ${c.tpl==2?"t3":c.tpl==3?"t4":""}" style="--c:${k}"><div class="hd"><h1>${nm}</h1>${tt}<div style="font-size:12px;margin-top:6px">${info.replace(/<br>/g," • ")}</div></div><div class="p">${b}</div></div>`}
+/* Listings */
+const num=s=>parseFloat(String(s).replace(/[^\d.]/g,""))||0;
+const usd=x=>{const n=x.pn!=null?x.pn:num(x.p);if(!n)return 0;const c=x.cur||(/\$/.test(x.p||"")?"USD":"IQD");return c=="USD"?n:n/(FX.iqd||1500)};
+const digits=ph=>String(ph||"").replace(/^0/,"964").replace(/\D/g,"");
+function countView(x){if(U&&x.uid==U.uid)return;const k="v_"+(U?U.uid:"g")+"_"+x.id;try{if(localStorage.getItem(k))return;localStorage.setItem(k,"1")}catch(e){}updateDoc(doc(db,"ads",x.id),{views:increment(1)}).catch(()=>{try{localStorage.removeItem(k)}catch(e){}})}
+const MC={shop:"#16a34a",phone:"#0891b2",furn:"#a16207",land:"#2563eb",rent:"#0d9488",car:"#7c3aed",srv:"#db2777",pet:"#65a30d",job:"#ea580c"};let MAP=null,MK=null,PM=null,PMK=null;
+const live=x=>Date.now()-(x.ts||0)<STALE&&!x.sold;
+const tiles=m=>{const d=matchMedia("(prefers-color-scheme: dark)").matches;L.tileLayer(d?"https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png":"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"+(d?" © CARTO":"")}).addTo(m)};
+const catChips=()=>`<button class="${S.C?"":"on"}" onclick="setC('')">🔲 هەمی</button>${Object.keys(CATS).map(k=>`<button class="${S.C==k?"on":""}" onclick="setC('${k}')">${CATS[k].i} ${CATS[k].n}</button>`).join("")}`;
+const pins=()=>A.filter(x=>x.lat&&x.lng&&live(x)&&(!S.C||x.cat==S.C));
+function mapView(){return`<div class="cats" style="margin-top:0">${catChips()}</div><div id="map" class="mapbox"></div><div style="margin-top:8px"><span class="pill">${pins().length} <span>ڕیکلام ل سەر نەخشەی</span></span></div>`}
+function initMap(){try{if(MAP){MAP.remove();MAP=null}const el=$("#map");if(!el||!window.L)return;MAP=L.map(el).setView([36.87,42.99],8);tiles(MAP);MK=L.markerClusterGroup?L.markerClusterGroup():L.layerGroup();MAP.addLayer(MK);MAP.on("popupopen",e=>tr(e.popup.getElement()));updMarkers(true)}catch(e){}}
+function updMarkers(fit){if(!MAP||!MK)return;MK.clearLayers();const pts=[];pins().forEach(x=>{const C=CATS[x.cat]||{i:"📍"},col=vipOn(x)?"#f59e0b":MC[x.cat]||"#2563eb",m=L.marker([x.lat,x.lng],{icon:L.divIcon({className:"",html:`<div class="mk" style="background:${col}">${C.i}</div>`,iconSize:[34,34],iconAnchor:[17,17]})});m.bindPopup(`<b>${vipOn(x)?"👑 ":""}${esc(x.t)}</b><br>${x.p?esc(x.p)+"<br>":""}<button onclick="openAd('${x.id}')">وردەکاری</button>`);MK.addLayer(m);pts.push([x.lat,x.lng])});if(fit&&pts.length)MAP.fitBounds(pts,{padding:[30,30],maxZoom:13})}
+function initPick(){try{if(PM){PM.remove();PM=null}const el=$("#pmap");if(!el||!window.L)return;PM=L.map(el).setView(S.LL||[36.87,42.99],S.LL?14:9);tiles(PM);PMK=null;window.putLL=ll=>{S.LL=[ll.lat,ll.lng];if(PMK)PMK.setLatLng(ll);else PMK=L.marker(ll).addTo(PM)};if(S.LL)putLL({lat:S.LL[0],lng:S.LL[1]});PM.on("click",e=>putLL(e.latlng))}catch(e){}}
+W({myLoc:()=>{if(!navigator.geolocation||!PM)return;navigator.geolocation.getCurrentPosition(p=>{const ll={lat:p.coords.latitude,lng:p.coords.longitude};putLL(ll);PM.setView(ll,15)},()=>alert(t("نەشێین جهێ تە بینین، ڕێگەدانێ ل ئەپی بکە")),{enableHighAccuracy:true,timeout:15000})}});
+const TH=x=>{const a=x.imgs&&x.imgs.length?x.imgs:x.img?[x.img]:[];return a[0]||""};
+function filtered(){const q=S.Q.toLowerCase(),ad=isAdmin(),lo=+S.P1||0,hi=+S.P2||0;
+const R2=A.filter(x=>{const own=U&&x.uid==U.uid;if(S.F&&!FAV.includes(x.id))return false;if(S.SEL&&x.uid!=S.SEL)return false;
+if(!(own||ad)&&Date.now()-(x.ts||0)>STALE)return false;if(S.C&&x.cat!=S.C)return false;if(S.K&&x.k!=S.K)return false;if(S.CT&&!String(x.c).includes(S.CT))return false;
+if(q&&!JSON.stringify([x.t,x.d,x.c,x.k,x.x,x.p]).toLowerCase().includes(q))return false;if(lo||hi){const v=usd(x);if(!v||(lo&&v<lo)||(hi&&v>hi))return false}return true}),so=S.SORT;
+R2.sort((a,b)=>(a.sold?1:0)-(b.sold?1:0)||(vipOn(b)?1:0)-(vipOn(a)?1:0)||(so=="cheap"?(usd(a)||1e12)-(usd(b)||1e12):so=="exp"?usd(b)-usd(a):(b.ts||0)-(a.ts||0)));return R2}
+const heart=id=>`<button class="hrt" onclick="event.stopPropagation();fav('${id}')">${FAV.includes(id)?"❤️":"🤍"}</button>`;
+function homeView(){if(S.cat=="add")return U?addView(S.AC):"";const CC=S.C&&CATS[S.C],L2=filtered(),V=L2.filter(x=>vipOn(x)&&!x.sold),cat=x=>CATS[x.cat]||{i:"",n:""};
+return`<div class="ban"><img src="silva-logo.png"><div><b>Silva App</b><small>کڕین و فرۆتن</small><small>ڕیکلامێ خۆ ب ئاسانی بەلاڤ بکە</small></div><button onclick="newAd()">＋ زێدەکرن</button></div>
+<input placeholder="🔍 بگەڕێ..." value="${esc(S.Q)}" onchange="S.Q=this.value;draw()">
+<div class="cats"><button class="${S.F?"on":""}" onclick="S.F=${S.F?0:1};draw()">❤️ دڵخواز</button>${catChips()}</div>
+${CC?`<div class="chips">${["",...CC.k].map(k=>`<button class="${S.K==k?"":"g"}" onclick="S.K='${k}';draw()">${k||"هەمی"}</button>`).join("")}</div>`:""}
+${S.SEL?`<div class="chips"><button onclick="S.SEL='';draw()">👤 فرۆشیار ✕</button></div>`:""}
+<div class="row"><input list="cities" placeholder="📍 شار" value="${esc(S.CT)}" onchange="S.CT=this.value;draw()"><select onchange="S.SORT=this.value;draw()"><option value="new" ${S.SORT=="new"?"selected":""}>نوێترین</option><option value="cheap" ${S.SORT=="cheap"?"selected":""}>هەرزانترین</option><option value="exp" ${S.SORT=="exp"?"selected":""}>گرانترین</option></select></div>
+<div class="row"><input type="number" inputmode="numeric" dir="ltr" placeholder="نرخ ژ ($)" value="${esc(S.P1)}" onchange="S.P1=this.value;draw()"><input type="number" inputmode="numeric" dir="ltr" placeholder="نرخ هەتا ($)" value="${esc(S.P2)}" onchange="S.P2=this.value;draw()"></div>
+<datalist id="cities">${CITYLIST.map(c=>`<option value="${c}">`).join("")}</datalist>
+${V.length?`<div class="sec"><div class="ic">👑</div><div><h3>ڕیکلامێن VIP</h3><small>ڕیکلامێن تایبەت</small></div></div><div class="vc">${V.map(x=>{const th=TH(x),C=cat(x);return`<div class="vcard" onclick="openAd('${x.id}')"><div class="vimg" style="${th?`background-image:url('${th}')`:""}">${th?"":`<span class="big">${C.i}</span>`}<span class="b1">⭐ VIP</span><span class="b2">${C.i} ${C.n}</span>${x.p?`<span class="b3">${esc(x.p)}</span>`:""}</div><b class="vt">${esc(x.t)}</b><div class="vs">📍 ${esc(x.c)} • 👁 ${x.views||0}</div></div>`}).join("")}</div>`:""}
+<div class="sec" style="justify-content:space-between"><h3>لیستا ڕیکلامان</h3><span class="pill">${L2.length} <span>ڕیکلام</span></span></div>`+
+(L2.length?L2.map(x=>{const th=TH(x),C=cat(x),v=vipOn(x);return`<div class="li ${v?"v":""} ${x.sold?"sold":""}" onclick="openAd('${x.id}')">${heart(x.id)}<div class="th" style="${th?`background-image:url('${th}')`:""}">${th?"":C.i}</div><div class="in"><b>${v?"👑 ":""}${esc(x.t)}</b><div style="margin:6px 0"><span class="tag">${esc(x.k)}</span><span class="tag">📍 ${esc(x.c)}</span><span class="tag">👁 ${x.views||0}</span>${x.sold?`<span class="tag" style="color:#16a34a">✅ <span>فرۆتراوە</span></span>`:""}</div>${x.p?`<div class="pr">${esc(x.p)}</div>`:""}<span class="tag" style="font-size:11px">${C.i} ${C.n}</span></div></div>`}).join(""):`<div class="card" style="text-align:center;color:var(--mu)">چ تشت نینە</div>`)}
+function fav(id){FAV=FAV.includes(id)?FAV.filter(x=>x!=id):[...FAV,id];try{localStorage.setItem("fav",JSON.stringify(FAV))}catch(e){}const b=document.querySelector("#dt .hrt2");if(b)b.textContent=FAV.includes(id)?"❤️":"🤍";if(S.view=="home"&&S.cat!="add")draw()}
+function shareAd(id){const x=A.find(y=>y.id==id);if(!x)return;const url=location.origin+location.pathname+"?ad="+id,tx=x.t+(x.p?" • "+x.p:"");if(navigator.share)navigator.share({title:x.t,text:tx,url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent(tx+"\n"+url),"_blank")}
+W({fav,shareAd,shareApp:()=>{const url=location.origin+location.pathname;if(navigator.share)navigator.share({title:"Silva App",url}).catch(()=>{});else window.open("https://wa.me/?text="+encodeURIComponent("Silva App\n"+url),"_blank")},
+seller:id=>{const x=A.find(y=>y.id==id);if(!x)return;S.SEL=x.uid;S.view="home";S.cat="";const d=document.getElementById("dt");d&&d.remove();draw()}});
+function openAd(id){const x=A.find(y=>y.id==id);if(!x)return;const old=document.getElementById("dt");old&&old.remove();const own=U&&x.uid==U.uid,ad=isAdmin(),C=CATS[x.cat]||{i:"",n:"",x:""},o=document.createElement("div"),v=vipOn(x),left=x.vipUntil?Math.max(0,Math.ceil((x.vipUntil-Date.now())/DAY)):0;o.id="dt";
+o.innerHTML=`<div class="dtw"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><b>${C.i} ${C.n}</b><div><button class="g hrt2" style="font-size:18px;padding:6px 12px" onclick="fav('${x.id}')">${FAV.includes(x.id)?"❤️":"🤍"}</button> <button class="g" onclick="this.closest('#dt').remove()">✕</button></div></div>${gal(x)}
+<h2 style="margin:6px 0">${v?"👑 ":""}${esc(x.t)}</h2><div style="margin:6px 0"><span class="tag">${esc(x.k)}</span><span class="tag">📍 ${esc(x.c)}</span><span class="tag">👁 ${x.views||0}</span>${x.x?`<span class="tag">${esc(x.x)}</span>`:""}${x.sold?`<span class="tag" style="color:#16a34a">✅ <span>فرۆتراوە</span></span>`:""}${x.vipReq&&!x.vip&&(own||ad)?`<span class="tag" style="color:#ea580c">⏳ چاڤەڕێ پشتڕاستکرنێ</span>`:""}${v&&x.vipUntil&&(own||ad)?`<span class="tag" style="color:#f59e0b">👑 ${left} <span>ڕۆژ ماون</span></span>`:""}</div>
+${x.p?`<div class="pr" style="font-size:22px">${esc(x.p)}</div>`:""}<p style="color:var(--mu);margin:10px 0;white-space:pre-wrap">${esc(x.d)}</p>
+${x.vipReq&&!x.vip&&own?`<a href="https://wa.me/${WA}?text=${encodeURIComponent("وەسڵ: "+x.rc+" | "+x.fee+" | "+x.t)}" target="_blank"><button class="g full" style="margin-bottom:8px">🧾 هنارتنا وەسڵێ ب واتساب</button></a>`:""}
+<div class="row" style="margin-bottom:8px"><a href="https://wa.me/${esc(digits(x.ph))}" target="_blank" style="text-decoration:none"><button class="full">💬 واتساب</button></a><a href="tel:${esc(String(x.ph||"").replace(/[^\d+]/g,""))}" style="text-decoration:none"><button class="g full">📞 پەیوەندی</button></a></div>
+<div class="row"><button class="g" onclick="shareAd('${x.id}')">📤 هنارتن</button>${!own?`<button class="g" onclick="seller('${x.id}')">👤 ڕیکلامێن ئەڤ فرۆشیاری</button>`:""}${!own?`<a href="https://wa.me/${WA}?text=${encodeURIComponent("ڕاپۆرت: "+x.t+" ("+x.id+")")}" target="_blank" style="text-decoration:none"><button class="g">🚩</button></a>`:""}</div>
+${own||ad?`<div class="row" style="margin-top:8px"><button class="g" onclick="editAd('${x.id}')">✏️ دەستکاریکرن</button><button class="g" onclick="soldAd('${x.id}',${!x.sold})">${x.sold?"🔁 ڕیکلام چالاک بکە":"✅ بکە فرۆتراو"}</button><button class="g" onclick="renewAd('${x.id}')">🔄 نویکرنەوە</button><button class="g" onclick="delAd('${x.id}')">🗑️</button></div>`:""}
+${ad?`<button class="g full" style="margin-top:8px" onclick="vipAd('${x.id}',${!x.vip})">${x.vip?"❌ VIP":"✅ VIP"}</button>`:""}</div>`;
+document.body.appendChild(o);tr(o);countView(x)}
+W({openAd});
+function addView(v){const C=CATS[v],P=S.PF||{},ed=!!S.EID;return`<h2>${ed?"✏️ <span>دەستکاریکرن</span>":"＋ <span>زێدەکرن</span>"}</h2>${ed?"":`<div class="cats">${Object.keys(CATS).map(k=>`<button class="${k==v?"on":""}" onclick="S.AC='${k}';S.PF=null;draw()">${CATS[k].i} ${CATS[k].n}</button>`).join("")}</div>`}<div class="card"><label>جۆر</label><select id="k">${C.k.map(k=>`<option value="${k}" ${P.k==k?"selected":""}>${k}</option>`).join("")}</select>
+<label>سەردێر</label><input id="t" value="${esc(P.t||"")}"><label>${C.x}</label><input id="x" value="${esc(P.x||"")}"><label>نرخ / مووچە</label><div class="row"><input id="pn" type="number" inputmode="decimal" dir="ltr" value="${P.pn!=null?esc(P.pn):""}"><select id="cur"><option value="IQD" ${P.cur!="USD"?"selected":""}>دینار</option><option value="USD" ${P.cur=="USD"?"selected":""}>$ دولار</option></select></div>
+<label>شار</label><input id="c" list="cities" value="${esc(P.c||"")}"><datalist id="cities">${CITYLIST.map(c=>`<option value="${c}">`).join("")}</datalist>
+<label>وەسف</label><textarea id="d" rows="3">${esc(P.d||"")}</textarea><label>ژمارا واتساب</label><input id="ph" dir="ltr" value="${esc(P.ph||(U.phoneNumber||CV.phone||"").replace("+964","0"))}">
+<label>جهێ ڕیکلامێ ل سەر نەخشەی</label><div id="pmap" class="mapbox" style="height:230px;min-height:0"></div><div class="row" style="margin:6px 0"><button type="button" class="g" onclick="myLoc()">📡 جهێ من</button></div><small style="color:var(--mu)">سەر نەخشەی بگرە دا جهی دیار بکەی</small>
+<label>وێنە (هەتا ١٠) <span id="pcn">0/10</span></label><div class="pv" id="prev"></div><input type="file" accept="image/*" multiple onchange="pic(this)">${ed?"":payBox()}<div class="row"><button onclick="${ed?"saveEdit()":`addItem('${v}')`}">${ed?"پاشەکەفتکرن":"بەلاڤکرن"}</button><button class="g" onclick="S.cat='';S.EID=null;draw()">پاشڤە</button></div></div>`}
+function qr(){try{const q=qrcode(0,"M");q.addData(PAY);q.make();return q.createDataURL(6,0)}catch(e){return""}}
+function payBox(){return`<div class="card"><b>💰 کرێیا بەلاڤکرنێ</b><select id="fee" onchange="$('#payd').style.display=this.value=='0'?'none':'block'"><option value="0">بێ پارە — ئاسایی</option><option value="1000">1,000 — ٧ ڕۆژ</option><option value="2000">2,000 — ١٥ ڕۆژ</option><option value="3000">3,000 — ٣٠ ڕۆژ</option><option value="5000">5,000 — ٣ مانگ</option></select>
+<p style="color:var(--mu);font-size:13px">⭐ ئەوێ پارەی بدەت ڕیکلامێ وی دچیتە سەری و VIP دبیت.</p><div id="payd" style="display:none"><div>${["FIB","FastPay","ZainCash","AsiaCell","SuperQi"].map(n=>`<button type="button" class="pm ${n==S.PM?"":"g"}" data-n="${n}" style="margin:3px;padding:6px 14px;border-radius:20px" onclick="selPM('${n}')">${n}</button>`).join("")}</div>
+${qr()?`<div style="text-align:center"><img src="${qr()}" style="width:170px;height:170px;background:#fff;padding:8px;border-radius:12px"><div id="pml" style="font-size:13px;color:var(--mu)"><span>باڕکۆد سکین بکە ب</span> <span id="pmn">${S.PM}</span></div></div>`:""}
+<div dir="ltr" style="text-align:${AL()};font-size:18px;margin:6px 0"><b>${PAY}</b></div><button class="g full" type="button" onclick="navigator.clipboard.writeText('${PAY}');alert(t('کۆپی بوو'))">📋 کۆپیکرنا ژمارەیێ</button>
+<label style="display:block;margin-top:8px">ژمارا وەسڵێ یان ناڤێ هنێرەر</label><input id="rc"></div></div>`}
+const adFields=()=>{const g=i=>$("#"+i).value.trim(),pn=parseFloat(g("pn"))||0,cur=g("cur");
+if(!g("t")){alert(t("سەردێرێ بنڤیسە"));return null}if(digits(g("ph")).length<11){alert(t("ژمارا واتساب دروست بنڤیسە"));return null}if(imgs.join("").length>850000){alert(t("وێنە گەلەک مەزنن، هندەک ژێببە"));return null}
+return{t:g("t"),k:g("k"),x:g("x"),p:pn?Number(pn).toLocaleString("en-US")+" "+(cur=="USD"?"$":"IQD"):"",pn,cur,c:g("c"),d:g("d"),ph:g("ph"),img:imgs[0]||"",imgs,lat:S.LL?S.LL[0]:null,lng:S.LL?S.LL[1]:null}};
+const closeDt=()=>{const d=document.getElementById("dt");d&&d.remove()};
+W({$,selPM:n=>{S.PM=n;document.querySelectorAll(".pm").forEach(b=>b.className="pm"+(b.dataset.n==n?"":" g"));$("#pmn").textContent=n},
+pic:async i=>{const fs=[...i.files].slice(0,10-imgs.length);for(const f of fs){try{imgs.push(await shrink(f))}catch(e){}}i.value="";prev();if(imgs.join("").length>850000)alert(t("وێنە گەلەک مەزنن، هندەک ژێببە"))},
+rmImg:i=>{imgs.splice(i,1);prev()},
+lb:(id,i)=>{const x=A.find(y=>y.id==id);if(!x)return;const a=x.imgs&&x.imgs.length?x.imgs:[x.img],o=document.createElement("div");o.id="lb";o.innerHTML=`<button onclick="this.parentNode.remove()">✕</button><div class="lg">${a.map(s=>`<img src="${s}">`).join("")}</div>`;document.body.appendChild(o);o.querySelector(".lg").children[i].scrollIntoView({inline:"center"})},
+addItem:async v=>{const f=adFields();if(!f)return;const fee=+$("#fee").value,rc=$("#rc").value.trim();if(fee&&!rc)return alert(t("ژمارا وەسڵێ بنڤیسە"));
+try{await addDoc(collection(db,"ads"),{uid:U.uid,cat:v,...f,vip:false,vipReq:fee>0,fee,pm:S.PM,rc,sold:false,ts:Date.now()});S.cat="";S.PF=null;S.LL=null;S.view="home";draw()}catch(e){alert(t("خەلەتی: ")+e.code)}},
+editAd:id=>{const x=A.find(y=>y.id==id);if(!x)return;closeDt();S.EID=id;S.PF={...x};S.AC=x.cat;imgs=[...(x.imgs&&x.imgs.length?x.imgs:x.img?[x.img]:[])];S.LL=x.lat?[x.lat,x.lng]:null;S.view="home";S.cat="add";draw()},
+saveEdit:async()=>{const f=adFields();if(!f)return;try{await updateDoc(doc(db,"ads",S.EID),f);S.EID=null;S.cat="";S.PF=null;S.LL=null;draw()}catch(e){alert(t("خەلەتی: ")+e.code)}},
+soldAd:async(id,b)=>{try{await updateDoc(doc(db,"ads",id),{sold:b});closeDt()}catch(e){alert(e.code)}},
+renewAd:async id=>{try{await updateDoc(doc(db,"ads",id),{ts:Date.now()});closeDt();alert(t("ڕیکلام هاتە نویکرن"))}catch(e){alert(e.code)}},
+delAd:async id=>{if(confirm(t("ژێ ببە؟")))try{await deleteDoc(doc(db,"ads",id));closeDt()}catch(e){alert(e.code)}},
+vipAd:async(id,b)=>{try{const x=A.find(y=>y.id==id)||{},n=Date.now();await updateDoc(doc(db,"ads",id),b?{vip:true,vipReq:false,vipSince:n,vipUntil:n+(DAYS[x.fee]||30)*DAY}:{vip:false,vipUntil:null});closeDt()}catch(e){alert(e.code)}}});
+/* Rates */
+let R={c:{}},FX={};
+const CITIES=[["duhok","دهۆک"],["erbil","هەولێر"],["sul","سلێمانی"]],nf=v=>v?Number(v).toLocaleString("en-US"):"—";
+onSnapshot(doc(db,"rates","main"),s=>{R=s.exists()?s.data():{c:{}};if(U&&S.view=="fx"&&!S.edit)draw()},()=>{});
+async function loadFX(){try{const r=await fetch("https://open.er-api.com/v6/latest/USD"),j=await r.json();if(j.rates&&j.rates.IQD)FX.iqd=j.rates.IQD}catch(e){}
+try{const r=await fetch("https://api.gold-api.com/price/XAU"),j=await r.json();if(j.price)FX.oz=j.price}catch(e){}
+FX.t=Date.now();if(U&&S.view=="fx"&&!S.edit)draw()}
+loadFX();setInterval(loadFX,600000);
+const r5=(v,m)=>Math.round(v/m)*m;
+function est(){if(!FX.iqd)return{};const mid=FX.iqd*100,o={b:r5(mid-250,250),s:r5(mid+250,250)};if(FX.oz){o.g21=r5(FX.oz/31.1035*5*21/24*FX.iqd,5000);o.g18=r5(FX.oz/31.1035*5*18/24*FX.iqd,5000)}return o}
+function fxView(){const ad=isAdmin(),c=R.c||{},E=est(),fresh=R.upd&&Date.now()-R.upd<1.5*864e5,u=R.upd?new Date(R.upd).toLocaleString("en-GB"):"—";
+const g21=FX.oz?FX.oz/31.1035*5*21/24:0,g18=FX.oz?FX.oz/31.1035*5*18/24:0;
+const ref=(FX.iqd||FX.oz)?`<div class="card"><b>🌍 نرخێ جیهانی (ئۆتۆماتیک)</b><div style="color:var(--mu);font-size:13px;margin-top:6px;line-height:2">${FX.iqd?`💵 ١٠٠$ = <b>${nf(Math.round(FX.iqd*100))}</b> <span>دینار (نرخێ ڕەسمی)</span><br>`:""}${FX.oz?`🥇 ئۆنسا زێڕی: <b>${nf(Math.round(FX.oz))}$</b><br>مسقالەک ٢١ = <b>${nf(Math.round(g21))}$</b>${FX.iqd?` ≈ ${nf(Math.round(g21*FX.iqd/1000)*1000)} <span>د.ع</span>`:""}<br>مسقالەک ١٨ = <b>${nf(Math.round(g18))}$</b>`:""}</div></div>`:"";
+const edit=ad&&S.edit;
+const cards=CITIES.map(([k,n])=>{const raw=c[k]||{},m=fresh?raw:{},x={b:m.b||E.b,s:m.s||E.s,g21:m.g21||E.g21,g18:m.g18||E.g18},au=!(m.b&&m.s);return edit?`<div class="card"><b>🏙️ ${n}</b><div class="row"><div><label>کڕینا ١٠٠$</label><input id="b_${k}" type="number" inputmode="numeric" dir="ltr" value="${raw.b||""}" placeholder="${E.b||""}"></div><div><label>فرۆتنا ١٠٠$</label><input id="s_${k}" type="number" inputmode="numeric" dir="ltr" value="${raw.s||""}" placeholder="${E.s||""}"></div></div><div class="row"><div><label>زێڕ ٢١ (مسقال)</label><input id="g21_${k}" type="number" inputmode="numeric" dir="ltr" value="${raw.g21||""}" placeholder="${E.g21||""}"></div><div><label>زێڕ ١٨ (مسقال)</label><input id="g18_${k}" type="number" inputmode="numeric" dir="ltr" value="${raw.g18||""}" placeholder="${E.g18||""}"></div></div></div>`:
+`<div class="card"><b>🏙️ ${n}</b> <span class="tag" style="font-size:11px">${au?"🤖 ئۆتۆماتیک (خەمڵاندن)":"✍️ نرخێ باژێری"}</span><div class="row" style="margin-top:8px"><div><span class="tag" style="color:#16a34a">کڕین</span><div class="pr" dir="ltr" style="text-align:${AL()};font-size:18px">${nf(x.b)}</div></div><div><span class="tag" style="color:#e11d48">فرۆتن</span><div class="pr" dir="ltr" style="text-align:${AL()};font-size:18px">${nf(x.s)}</div></div></div><div style="color:var(--mu);font-size:13px;margin-top:8px;line-height:1.9">🥇 <span>زێڕ ٢١</span>: <b>${nf(x.g21)}</b> • <span>زێڕ ١٨</span>: <b>${nf(x.g18)}</b> <span style="font-size:11px">(مسقالەک / دینار)</span></div></div>`}).join("");
+return`<h2>💱 نرخێ دۆلار و زێڕی</h2><p style="color:var(--mu);font-size:13px;margin:0 0 10px"><span>نرخێ ١٠٠ دۆلارێ ب دیناری عیراقی</span> • <span>نویکرنا ئەدمینی</span>: ${u}<br><span>🤖 ئەگەر ئەدمین نرخ نەنڤیسین (یان پتر ژ ٣٦ دەمژمێران بووی)، نرخ ب ئۆتۆماتیک ژ بازارا جیهانی دهێنە خەمڵاندن.</span></p>${cards}${ref}
+${ad?(edit?`<button class="g full" style="margin-bottom:8px" onclick="fillAuto()">🔄 پڕکرنا ب نرخێ ئۆتۆماتیک</button><div class="row"><button onclick="saveFx()">💾 تۆمارکرن</button><button class="g" onclick="S.edit=0;draw()">پاشڤە</button></div>`:`<button class="full" onclick="S.edit=1;draw()">✏️ نویکرنا نرخان (ئەدمین)</button>`):""}`}
+W({fillAuto:()=>{const E=est();if(!E.b)return alert(t("نرخێ ئۆتۆماتیک هێشتا نەهاتیە، دووبارە هەول بدە"));CITIES.forEach(([k])=>{["b","s","g21","g18"].forEach(f=>{const e=$("#"+f+"_"+k);if(e&&E[f])e.value=E[f]})})},saveFx:async()=>{const c={};CITIES.forEach(([k])=>{c[k]={b:+$("#b_"+k).value||0,s:+$("#s_"+k).value||0,g21:+$("#g21_"+k).value||0,g18:+$("#g18_"+k).value||0}});try{await setDoc(doc(db,"rates","main"),{c,upd:Date.now()});S.edit=0;draw()}catch(e){alert(t("خەلەتی: ")+e.code)}}});
+function vipPanel(){if(!isAdmin())return"";const P=A.filter(x=>x.vipReq&&!x.vip).sort((a,b)=>b.ts-a.ts),H=A.filter(x=>x.vipSince).sort((a,b)=>b.vipSince-a.vipSince).slice(0,30),tot=A.filter(x=>x.vipSince).reduce((s,x)=>s+(+x.fee||0),0),
+users=new Set(A.map(x=>x.uid)).size,views=A.reduce((s,x)=>s+(x.views||0),0),act=A.filter(live).length;
+return`<div class="card"><b>📊 <span>ئاماری ئەدمین</span></b><div class="chips" style="margin-top:8px"><span class="tag">📢 ${A.length} <span>ڕیکلام</span></span><span class="tag">✅ ${act} <span>چالاک</span></span><span class="tag">👤 ${users} <span>فرۆشیار</span></span><span class="tag">👁 ${views}</span><span class="tag">👑 ${A.filter(vipOn).length} VIP</span><span class="tag">💰 ${nf(tot)}</span></div></div>
+<div class="card"><b>👑 <span>داخوازێن VIP</span> (${P.length})</b>${P.length?P.map(x=>`<div style="border-top:1px solid var(--bd);padding:8px 0;margin-top:8px"><b>${esc(x.t)}</b><div style="margin:4px 0"><span class="tag">${CATS[x.cat]?CATS[x.cat].i+" "+CATS[x.cat].n:""}</span><span class="tag">💰 ${nf(x.fee)}</span><span class="tag">${esc(x.pm)}</span></div><div style="font-size:13px;color:var(--mu)">🧾 ${esc(x.rc)}</div><div class="row" style="margin-top:6px"><button onclick="vipAd('${x.id}',true)">✅ پەسەندکرن</button><button class="g" onclick="rejVip('${x.id}')">❌ ڕەتکرن</button></div></div>`).join(""):`<p style="color:var(--mu);margin:8px 0 0">چ داخواز نینن</p>`}</div>
+<div class="card"><b>🧾 <span>تۆمارا پارەدانان</span></b>${H.length?H.map(x=>`<div style="border-top:1px solid var(--bd);padding:6px 0;margin-top:6px;font-size:13px"><b>${esc(x.t)}</b> — ${nf(x.fee)} • ${esc(x.pm||"")}<div style="color:var(--mu)">${new Date(x.vipSince).toLocaleDateString("en-GB")}${x.vipUntil?" → "+new Date(x.vipUntil).toLocaleDateString("en-GB"):""}</div></div>`).join(""):`<p style="color:var(--mu);margin:8px 0 0">چ نینە</p>`}</div>`}
+W({rejVip:async id=>{try{await updateDoc(doc(db,"ads",id),{vipReq:false})}catch(e){alert(e.code)}},
+delAcc:async()=>{if(!confirm(t("هەژمارا تە و هەمی ڕیکلامێن تە دێ هێنە ژێبرن. دڵنیایی؟")))return;try{for(const x of A.filter(y=>y.uid==U.uid))await deleteDoc(doc(db,"ads",x.id));try{await deleteDoc(doc(db,"cvs",U.uid))}catch(e){}await deleteUser(U);S.view="home";alert(t("هەژمار هاتە ژێبرن"))}catch(e){alert(e.code=="auth/requires-recent-login"?t("دەرکەڤە و دووبارە بچە ژوور، پاشی هەول بدە"):e.code)}}});
+function userPanel(){if(!isAdmin())return"";const m={};UL.forEach(u=>m[u.id]={id:u.id,n:u.n,e:u.e,p:u.p,c:u.c,l:u.last});A.forEach(x=>{if(!m[x.uid])m[x.uid]={id:x.uid,p:x.ph}});
+const L=Object.values(m).map(u=>({...u,cn:u.c,c:A.filter(x=>x.uid==u.id).length})).sort((a,b)=>(b.l||0)-(a.l||0));
+return`<div class="card"><b>👥 <span>بەکارهێنەر</span> (${L.length})</b>${L.map(u=>{const bn=BN.includes(u.id);return`<div style="border-top:1px solid var(--bd);padding:8px 0;margin-top:8px"><b>${esc(u.n||u.e||u.p||u.id.slice(0,8))}</b>${bn?` <span class="tag" style="color:#dc2626">🚫</span>`:""}<div dir="ltr" style="text-align:${AL()};font-size:13px;color:var(--mu)">${esc(u.e||"")} ${esc(u.p||"")}</div>${u.cn?`<div style="font-size:13px;color:var(--mu)">📍 ${esc(u.cn)}</div>`:""}<div style="margin:4px 0"><span class="tag">📢 ${u.c}</span>${u.l?`<span class="tag">${new Date(u.l).toLocaleDateString("en-GB")}</span>`:""}</div><div class="row">${u.c?`<button class="g" onclick="seller('${A.find(x=>x.uid==u.id).id}')">👁 <span>ڕیکلام</span></button><button class="g" onclick="delUserAds('${u.id}')">🗑️ <span>ڕیکلامان</span></button>`:""}<button class="g" onclick="banUser('${u.id}',${!bn})">${bn?"✅":"🚫"}</button></div></div>`}).join("")}</div>`}
+W({banUser:async(id,b)=>{if(!confirm(t(b?"قەدەغەکرن؟":"قەدەغە لابەرن؟")))return;try{b?await setDoc(doc(db,"banned",id),{ts:Date.now()}):await deleteDoc(doc(db,"banned",id))}catch(e){alert(e.code)}},
+delUserAds:async id=>{if(!confirm(t("هەمی ڕیکلامێن ڤی کەسی ژێببە؟")))return;try{for(const x of A.filter(y=>y.uid==id))await deleteDoc(doc(db,"ads",x.id))}catch(e){alert(e.code)}}});
+function setView(){const my=A.filter(x=>x.uid==U.uid).sort((a,b)=>b.ts-a.ts);return`<h2>⚙️ ڕێکخستن</h2>${vipPanel()}${isAdmin()?`<button class="full" style="margin-bottom:10px" onclick="go('users')">👥 <span>بەکارهێنەر</span> (${new Set(A.map(x=>x.uid).concat(UL.map(u=>u.id))).size})</button>`:""}<div class="card"><b>هەژمار</b><p dir="ltr" style="text-align:${AL()}">${esc(U.phoneNumber||U.email)}</p>${isAdmin()?"<p>👑 ئەدمین</p>":""}</div>
+<div class="card"><b>📢 <span>ڕیکلامێن من</span> (${my.length})</b>${my.length?my.map(x=>{const v=vipOn(x),old=Date.now()-(x.ts||0)>STALE;return`<div style="border-top:1px solid var(--bd);padding:8px 0;margin-top:8px;display:flex;gap:8px;align-items:center" onclick="openAd('${x.id}')"><div style="flex:1"><b>${v?"👑 ":""}${esc(x.t)}</b><div style="margin-top:4px"><span class="tag">👁 ${x.views||0}</span>${x.sold?`<span class="tag" style="color:#16a34a">✅</span>`:""}${old&&!x.sold?`<span class="tag" style="color:#ea580c">⌛ <span>بدویماهی هات</span></span>`:""}${x.vipReq&&!x.vip?`<span class="tag">⏳</span>`:""}</div></div><button class="g" onclick="event.stopPropagation();editAd('${x.id}')">✏️</button></div>`}).join(""):`<p style="color:var(--mu);margin:8px 0 0">چ ڕیکلامێن تە نینن</p>`}</div>
+<div class="card"><b>📞 پەیوەندی</b><div class="row" style="margin-top:8px"><a href="https://wa.me/${WA}" target="_blank" style="text-decoration:none"><button class="full">💬 واتساب</button></a><a href="mailto:${MAIL}" style="text-decoration:none"><button class="g full">✉️ ئیمەیل</button></a></div><p dir="ltr" style="text-align:${AL()};color:var(--mu);font-size:13px">07513578668<br>${MAIL}</p></div>
+<div class="card"><b>🌐 زمان</b><div style="margin-top:8px">${langBar()}</div></div>
+<button class="g full" style="margin-bottom:8px" onclick="shareApp()">📤 هنارتنا ئەپی</button>
+<a href="terms.html" target="_blank" style="text-decoration:none"><button class="g full" style="margin-bottom:8px">📜 مەرجێن بکارئینانێ</button></a>
+<a href="privacy.html" target="_blank" style="text-decoration:none"><button class="g full" style="margin-bottom:8px">🔒 سیاسەتا نهێنیێ</button></a><button class="g full" style="margin-bottom:8px" onclick="logout()">دەرکەتن</button><button class="g full" style="color:#dc2626" onclick="delAcc()">🗑️ ژێبرنا هەژمارێ</button>`}
+</script></body></html>
