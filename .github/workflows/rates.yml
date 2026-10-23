@@ -1,0 +1,24 @@
+name: update-rates
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+jobs:
+  rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 fetch_rates.py
+      - name: commit
+        run: |
+          git config user.name "rates-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add rates.json
+          git diff --cached --quiet || (git commit -m "update rates" && git push)
+      - name: rebuild pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST repos/${{ github.repository }}/pages/builds || true
